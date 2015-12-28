@@ -1,18 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
+	speedtest "github.com/kogai/speedtest-go"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
-
-func CheckError(err error) {
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
 
 func SetTimeout() {
 	if *timeoutOpt != 0 {
@@ -33,10 +24,10 @@ func main() {
 
 	SetTimeout()
 
-	user := FetchUserInfo()
+	user := speedtest.FetchUserInfo()
 	user.Show()
 
-	list := FetchServerList(user)
+	list := speedtest.FetchServerList(user)
 	if *showList {
 		list.Show()
 		return
