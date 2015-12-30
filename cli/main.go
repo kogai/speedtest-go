@@ -23,17 +23,14 @@ func main() {
 	kingpin.Parse()
 
 	SetTimeout()
+	speedtester := speedtest.New()
+	speedtester.FetchServers()
 
-	user := speedtest.FetchUserInfo()
-	user.Show()
+	speedtester.ShowUser()
 
-	list := speedtest.FetchServerList(user)
 	if *showList {
-		list.Show()
+		speedtester.ShowList()
 		return
 	}
-
-	targets := list.FindServer(*serverIds)
-	targets.StartTest()
-	targets.ShowResult()
+	speedtester.ShowResult(*serverIds)
 }

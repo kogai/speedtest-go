@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math"
 	"net/http"
 	"sort"
@@ -135,15 +136,15 @@ func (l List) Show() {
 	}
 }
 
-func (s Server) Show() {
+func (s Server) Show(logger *log.Logger) {
 	fmt.Printf(" \n")
-	fmt.Printf("Target Server: [%4s] %8.2fkm ", s.Id, s.Distance)
-	fmt.Printf(s.Name + " (" + s.Country + ") by " + s.Sponsor + "\n")
+	logger.Printf("Target Server: [%4s] %8.2fkm ", s.Id, s.Distance)
+	logger.Printf(s.Name + " (" + s.Country + ") by " + s.Sponsor + "\n")
 }
 
-func (svrs Servers) StartTest() {
+func (svrs Servers) StartTest(logger *log.Logger) {
 	for i, s := range svrs {
-		s.Show()
+		s.Show(logger)
 		latency := PingTest(s.Url)
 		dlSpeed := DownloadTest(s.Url, latency)
 		ulSpeed := UploadTest(s.Url, latency)
@@ -152,14 +153,14 @@ func (svrs Servers) StartTest() {
 	}
 }
 
-func (svrs Servers) ShowResult() {
+func (svrs Servers) ShowResult(logger *log.Logger) {
 	fmt.Printf(" \n")
 	if len(svrs) == 1 {
-		fmt.Printf("Download: %5.2f Mbit/s\n", svrs[0].DLSpeed)
-		fmt.Printf("Upload: %5.2f Mbit/s\n", svrs[0].ULSpeed)
+		logger.Printf("Download: %5.2f Mbit/s\n", svrs[0].DLSpeed)
+		logger.Printf("Upload: %5.2f Mbit/s\n", svrs[0].ULSpeed)
 	} else {
 		for _, s := range svrs {
-			fmt.Printf("[%4s] Download: %5.2f Mbit/s, Upload: %5.2f Mbit/s\n", s.Id, s.DLSpeed, s.ULSpeed)
+			logger.Printf("[%4s] Download: %5.2f Mbit/s, Upload: %5.2f Mbit/s\n", s.Id, s.DLSpeed, s.ULSpeed)
 		}
 		avgDL := 0.0
 		avgUL := 0.0
@@ -167,7 +168,7 @@ func (svrs Servers) ShowResult() {
 			avgDL = avgDL + s.DLSpeed
 			avgUL = avgUL + s.ULSpeed
 		}
-		fmt.Printf("Download Avg: %5.2f Mbit/s\n", avgDL/float64(len(svrs)))
-		fmt.Printf("Upload Avg: %5.2f Mbit/s\n", avgUL/float64(len(svrs)))
+		logger.Printf("Download Avg: %5.2f Mbit/s\n", avgDL/float64(len(svrs)))
+		logger.Printf("Upload Avg: %5.2f Mbit/s\n", avgUL/float64(len(svrs)))
 	}
 }
